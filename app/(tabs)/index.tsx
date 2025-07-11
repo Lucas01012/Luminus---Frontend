@@ -5,7 +5,7 @@ import axios from 'axios'
 
 export default function HomeScreen(){
   const [image, setImage] = useState <string | null>(null);
-  const [resultado, setResultado] = useState<any[] | null>(null);
+const [resultado, setResultado] = useState<{ labels: any[]; web_entities: any[] } | null>(null);
   const [carregando, setCarregando] = useState(false);
 
 const pickImage = async() =>{
@@ -62,14 +62,19 @@ const sendImage = async() =>{
 
       {carregando && <ActivityIndicator size="large" color="#ef7b00" style={{ marginTop: 20 }} />}
 
-      {resultado && (
-        <View style={styles.resultado}>
-          <Text style={styles.subtitulo}>Resultado:</Text>
-          {resultado.map((obj, idx) => (
-            <Text key={idx}>• {obj.objeto} ({(obj.confianca * 100).toFixed(1)}%)</Text>
-          ))}
-        </View>
-      )}
+{resultado && (
+  <View style={styles.resultado}>
+    <Text style={styles.subtitulo}>Labels detectados:</Text>
+    {resultado.labels?.map((obj: any, idx: number) => (
+      <Text key={`label-${idx}`}>• {obj.objeto} ({(obj.confianca * 100).toFixed(1)}%)</Text>
+    ))}
+
+    <Text style={[styles.subtitulo, { marginTop: 10 }]}>Entidades da Web:</Text>
+    {resultado.web_entities?.map((obj: any, idx: number) => (
+      <Text key={`web-${idx}`}>• {obj.descricao} ({(obj.score * 100).toFixed(1)}%)</Text>
+    ))}
+  </View>
+)}
     </ScrollView>
   );
 }
